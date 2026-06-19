@@ -1,0 +1,788 @@
+{
+  "name": "Agent Wiktor Whats",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        -864,
+        -48
+      ],
+      "id": "65fe7f86-874b-437c-8d33-9c7ee0ab4cb1",
+      "name": "WhatsApp Trigger",
+      "webhookId": "bf144c52-92a0-48e3-b601-e56ea378a503",
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "qCEzKegKYRGrvy4i",
+          "name": "Agent Wiktor WhatsApp OAuth API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -176,
+        192
+      ],
+      "id": "8baff0ad-05e6-4f8a-a4c4-9338f7e6d163",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "qqHVG1El3Pn0jsJY",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "1062283756974681",
+        "recipientPhoneNumber": "={{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}",
+        "textBody": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        656,
+        144
+      ],
+      "id": "85627905-39ef-4c9a-b9af-a9567ffc50f7",
+      "name": "Send message",
+      "webhookId": "3e6da939-0161-42ad-93f3-7930fe4b5b69",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "T1jWK8Xjg7uQWdnJ",
+          "name": "Agent Wiktor WhatsApp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5c746733-224c-4e0e-a018-81851bc06202",
+              "name": "text",
+              "value": "={{ $('WhatsApp Trigger').item.json.messages[0].text.body }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -400,
+        -32
+      ],
+      "id": "1fad6b26-ddc5-482f-9b6b-b2c199c8e702",
+      "name": "Text support"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.messages[0].audio }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "883e7b82-ec5f-49cb-a005-8795e8a58ba3"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "e63e080f-b7f2-4ce5-ad0f-1f54d67f5a77",
+                    "leftValue": "={{ $json.messages[0].text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "be78f160-27a1-4035-9f4c-f6316d3d3584",
+                    "leftValue": "={{ $json.messages[0].from  }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "wiadomość istnieje"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "d763f201-519f-41fe-a1a7-bc2c68949bcd",
+                    "leftValue": "={{ $json.messages[0].from  }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEmpty",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "wiadomość nie jest pusta"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "664647dd-5a60-47c0-a81f-c93ba9373803",
+                    "leftValue": "={{ $json.messages[0].type }}",
+                    "rightValue": "text",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "wyklucza wiadomości z serwera"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -640,
+        -96
+      ],
+      "id": "904a1f11-bd8c-439b-ba4b-971c041058af",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        -16,
+        -352
+      ],
+      "id": "bbca8bbe-7700-4dd4-b4d9-367cb53a54c6",
+      "name": "Transcribe a recording",
+      "credentials": {
+        "openAiApi": {
+          "id": "qqHVG1El3Pn0jsJY",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "media",
+        "operation": "mediaUrlGet",
+        "mediaGetId": "={{ $json.messages[0].audio.id }}"
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        -448,
+        -352
+      ],
+      "id": "4d475e70-a20b-44f3-b5aa-833179c79177",
+      "name": "Download media / Take URL",
+      "webhookId": "1ae1c53d-b9b7-4399-8927-c7aa7e201e81",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "T1jWK8Xjg7uQWdnJ",
+          "name": "Agent Wiktor WhatsApp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -240,
+        -352
+      ],
+      "id": "0a2df794-5e3d-4d3a-b4e8-d6a8a2fd16fb",
+      "name": "HTTP Request Download audio",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "NcX5IdFzHYOxb7rG",
+          "name": "Agent Wiktor"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3b06ba10-4b09-4ef6-883e-de7889b84da1",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        -352
+      ],
+      "id": "58bb0792-2276-4a6f-8ccc-5b96cbbc32ce",
+      "name": "Audio support"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Nazywasz się Agent Wiktor. Jesteś osobistym agentem Kate, odpowiadaj zwieźle na wiadomości od {{ $('WhatsApp Trigger').item.json.contacts[0].profile.name }} : {{ $json.text }}\n\nZawsze podpisuj się : 'Agent Wiktor'\n\n",
+        "options": {
+          "systemMessage": "=Jesteś eksperckim asystentem reprezentującym Adaptify AI. \n\nZawsze odpowiadaj w pomocny sposób.\n\nObecnie rozmawiasz z \n{{ $('WhatsApp Trigger').item.json.contacts[0].profile.name }} \n{{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}\nDlatego w pierwszej wiadomosci zwracaj sie po imieniu.\n\nNarzedzia\n\nZAWSZE korzystaj z Bazy Wiedzy Adaptify AI przed odpowiadaniu na pytania użytkowników. Wszystkie odpowiedzi powinny opierać się wyłącznie na informacjach dostępnych w tej bazie, aby zapewnić dokładność, spójność i rzetelność komunikacji.\n\n\nBędziesz korzystać z bazy danych wektorowych, aby wyszukiwać odpowiednie informacje i odpowiadać na zapytania użytkowników.\n\nTwoim głównym zadaniem jest udzielanie dokładnych, rzetelnych i trafnych informacji na temat oferty Adaptify AI oraz tego, w jaki sposób może ona odpowiadać na konkretne potrzeby użytkowników.\n\nJeśli użytkownik pyta o daną usługę, poprowadź go, jak może zapoznać się z rozwiązaniami Adaptify AI lub skorzystać z nich, udostępniając odpowiednie adresy URL, dane kontaktowe lub dodatkowe zasoby, jeśli to konieczne.\n\nTwoim celem jest edukowanie i wspieranie użytkownika, a nie bezpośrednia sprzedaż — tak, aby użytkownik czuł się poinformowany i pewny w podejmowaniu decyzji.\n\nJeśli nie możesz uzyskać informacji z bazy wiedzy lub nie znasz odpowiedzi — powiedz to otwarcie. Zawsze dąż do jasności i pomocności w swoich odpowiedziach.\n\nThe current date and time {{ $now.toISO() }}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        32,
+        -32
+      ],
+      "id": "838523d7-dac3-4dd7-b032-8aef9a0b8890",
+      "name": "Agent Wiktor"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c7ef12a2-a301-4446-a5e3-9e931d1fa55b",
+              "leftValue": "={{ $('WhatsApp Trigger').item.json.messages[0].audio }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        -32
+      ],
+      "id": "aa3d6324-6c39-42f2-8d5f-27d43021ca16",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "input": "={{ $('Agent Wiktor').item.json.output }}",
+        "voice": "onyx",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        656,
+        -208
+      ],
+      "id": "4e9f2cf8-0de9-49f8-8589-06c46cb6a952",
+      "name": "Generate audio",
+      "credentials": {
+        "openAiApi": {
+          "id": "qqHVG1El3Pn0jsJY",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "1062283756974681",
+        "recipientPhoneNumber": "={{ $('WhatsApp Trigger').item.json.messages[0].from }}",
+        "messageType": "audio",
+        "mediaPath": "useMedian8n",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        992,
+        -208
+      ],
+      "id": "9b7cf825-e7eb-4909-841f-bf4f3391bbf3",
+      "name": "Send audio",
+      "webhookId": "b58535c1-706f-46f1-88b3-b947401e2774",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "T1jWK8Xjg7uQWdnJ",
+          "name": "Agent Wiktor WhatsApp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and change the MIME type of binary data\nfor (const item of $input.all()) {\n  // Check if the item has binary data\n  if (item.binary) {\n    // Find the binary property name (assuming there's at least one)\n    const binaryPropertyNames = Object.keys(item.binary);\n    \n    for (const propName of binaryPropertyNames) {\n      // If the MIME type is 'audio/mp3', change it to 'audio/mpeg'\n      if (item.binary[propName].mimeType === 'audio/mp3') {\n        item.binary[propName].mimeType = 'audio/mpeg';\n      }\n    }\n  }\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        816,
+        -208
+      ],
+      "id": "7ae1b464-fc36-4a7f-8d97-0f23ed174be3",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "description": "Wywołaj to narzędzie aby przeszukać bazę wiedzy adpatify AI. "
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1.1,
+      "position": [
+        256,
+        176
+      ],
+      "id": "74f06043-f913-4173-a0fa-32930da5ac76",
+      "name": "Answer questions with a vector store"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        512,
+        384
+      ],
+      "id": "206ca23f-c558-4d66-9ffb-7b176da13f12",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "qqHVG1El3Pn0jsJY",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        64,
+        640
+      ],
+      "id": "70bd840b-7440-4ec7-b739-6b2ae606a9aa",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "qqHVG1El3Pn0jsJY",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        112,
+        464
+      ],
+      "id": "756e5d0a-5809-4e02-a5af-59376438adbd",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "NnRcATS2qAe0T5z3",
+          "name": "Supabase Agent Wiktor"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('WhatsApp Trigger').item.json.messages[0].from  }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        48,
+        176
+      ],
+      "id": "1ef985ab-952f-47bd-b7c0-67fff0ee5532",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "9fuTz9vXNDeXB5sY",
+          "name": "Postgres  Agent Wiktor"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agent Wiktor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message": {
+      "main": [
+        []
+      ]
+    },
+    "Text support": {
+      "main": [
+        [
+          {
+            "node": "Agent Wiktor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Download media / Take URL",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Text support",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Text support",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Text support",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Text support",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download media / Take URL": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request Download audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request Download audio": {
+      "main": [
+        [
+          {
+            "node": "Transcribe a recording",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe a recording": {
+      "main": [
+        [
+          {
+            "node": "Audio support",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audio support": {
+      "main": [
+        [
+          {
+            "node": "Agent Wiktor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agent Wiktor": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Generate audio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate audio": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer questions with a vector store": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agent Wiktor",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Answer questions with a vector store",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Answer questions with a vector store",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agent Wiktor",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "a66cf20b-3fa0-4de8-a4be-f9ee3696b98f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ae002c203006b6472c35ba76f04fe70f5ae8903f2d0b0bcdd00c826bdca880e8"
+  },
+  "id": "XMYg3zLeU2aFByeV",
+  "tags": []
+}
